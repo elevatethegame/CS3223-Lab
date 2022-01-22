@@ -1,7 +1,10 @@
 package simpledb.test;
-import java.sql.*;
 import java.util.Scanner;
-import simpledb.jdbc.embedded.EmbeddedDriver;
+import simpledb.plan.Plan;
+import simpledb.plan.Planner;
+import simpledb.query.Scan;
+import simpledb.server.SimpleDB;
+import simpledb.tx.Transaction;
 
 public class FindMajors {
    public static void main(String[] args) {
@@ -12,24 +15,29 @@ public class FindMajors {
       System.out.println("Here are the " + major + " majors");
       System.out.println("Name\tGradYear");
 
-      String url = "jdbc:simpledb:studentdb";
+      // analogous to the driver
+	  SimpleDB db = new SimpleDB("studentdb");
+	
+	  // analogous to the connection
+	  Transaction tx  = db.newTx();
+	  Planner planner = db.planner();
+	  
       String qry = "select sname, gradyear "
             + "from student, dept "
             + "where did = majorid "
             + "and dname = '" + major + "'";
- 
-      Driver d = new EmbeddedDriver();
-      try (Connection conn = d.connect(url, null);
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(qry)) {
-         while (rs.next()) {
-            String sname = rs.getString("sname");
-            int gradyear = rs.getInt("gradyear");
-            System.out.println(sname + "\t" + gradyear);
-         }
+      
+      Plan p = planner.createQueryPlan(qry, tx);
+      
+      // analogous to the result set
+      Scan s = p.open();
+      
+      while (s.next()) {
+         String sname = s.getString("sname");
+         int gradyear = s.getInt("gradyear"); 
+         System.out.println(sname + "\t" + gradyear);
       }
-      catch(Exception e) {
-         e.printStackTrace();
-      }
+      s.close();
+      tx.commit();
    }
 }
