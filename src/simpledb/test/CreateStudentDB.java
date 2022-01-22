@@ -97,6 +97,8 @@ public class CreateStudentDB {
    	  	  planner.executeUpdate(cmd, tx);	  
 	  }
 	  System.out.println("ENROLL records inserted.");
+	  
+	  tx.commit();
 
    }
 }

@@ -1,22 +1,26 @@
 package simpledb.test;
-import java.sql.*;
-import simpledb.jdbc.embedded.EmbeddedDriver;
+
+import simpledb.plan.Planner;
+import simpledb.server.SimpleDB;
+import simpledb.tx.Transaction;
 
 public class ChangeMajor {
    public static void main(String[] args) {
-      Driver d = new EmbeddedDriver();
-      String url = "jdbc:simpledb:studentdb";
+	   // analogous to the driver
+	   SimpleDB db = new SimpleDB("studentdb");
+	
+	   // analogous to the connection
+	   Transaction tx  = db.newTx();
+	   Planner planner = db.planner();
 
-      try (Connection conn = d.connect(url, null); 
-            Statement stmt = conn.createStatement()) {
-         String cmd = "update STUDENT "
-                    + "set MajorId=30 "
-                    + "where SName = 'amy'";
-         stmt.executeUpdate(cmd);
-         System.out.println("Amy is now a drama major.");
-      }
-      catch(SQLException e) {
-         e.printStackTrace();
-      }
+	   String cmd = "update STUDENT "
+               + "set MajorId=30 "
+               + "where SName = 'amy'";
+	   
+	   planner.executeUpdate(cmd, tx);
+	   System.out.println("Amy is now a drama major.");
+	   
+	   tx.commit();
+      
    }
 }
