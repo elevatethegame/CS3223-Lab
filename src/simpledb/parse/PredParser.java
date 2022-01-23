@@ -1,5 +1,8 @@
 package simpledb.parse;
 
+import simpledb.query.Expression;
+import simpledb.query.Term;
+
 public class PredParser {
    private Lexer lex;
 
@@ -24,10 +27,14 @@ public class PredParser {
       else 
          constant();
    }
+   
+   public String operator() {
+	   return lex.eatOperator();
+   }
 
    public void term() {
       expression();
-      lex.eatDelim('=');
+      operator();
       expression();
    }
 

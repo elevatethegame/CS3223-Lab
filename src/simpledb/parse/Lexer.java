@@ -21,7 +21,9 @@ public class Lexer {
       initOperators();
       tok = new StreamTokenizer(new StringReader(s));
       tok.ordinaryChar('.');   //disallow "." in identifiers
+      tok.wordChars(60, 62); // add ascii range to support < = >
       tok.wordChars('_', '_'); //allow "_" in identifiers
+      tok.wordChars('!', '!'); // add ascii support for ! character
       tok.lowerCaseMode(true); //ids and keywords are converted
       nextToken();
    }
@@ -76,6 +78,7 @@ public class Lexer {
     * @return true if the current token is an operator
     */
    public boolean matchOperator() {
+//	   System.out.println("Value of operator: " + tok.sval);
       return operators.contains(tok.sval);
    }
    

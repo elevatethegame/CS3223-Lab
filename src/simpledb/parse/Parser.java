@@ -42,6 +42,7 @@ public class Parser {
    
    public Term term() {
       Expression lhs = expression();
+//      System.out.println(lhs.asFieldName());
       String oprt = operator();
       Expression rhs = expression();
       return new Term(lhs, rhs, oprt);
